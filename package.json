@@ -1,0 +1,21 @@
+{
+  "name": "rider-server",
+  "version": "0.1.1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node launcher.js"
+  },
+  "keywords": [],
+  "author": "Benno van Dorst",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@racehub-io/f1-telemetry-client": "^0.2.12",
+    "amqplib": "^0.10.8",
+    "chalk": "^5.4.1",
+    "figlet": "^1.8.1",
+    "ws": "^8.18.2"
+  }
+}
