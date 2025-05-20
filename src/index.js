@@ -45,7 +45,6 @@ rl.question('Which SimRig are we using? (1 or 2): ', async simrigId => {
 
   messaging.consume(simrigId, simRigConfig.cardamageQueue, data => {
     websocket.broadcast(simrigId, { type: 'carDamage', data });
-    console.log(data)
   })
 
   telemetry.on('carTelemetry', data => {
