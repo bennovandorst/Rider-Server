@@ -59,7 +59,7 @@ rl.question('Which SimRig are we using? (1 or 2): ', async simrigId => {
 
   telemetry.start();
 
-  logInfo(`UDP listening on port ${CONFIG.UDP_PORT}`);
+  //logInfo(`UDP listening on port ${CONFIG.UDP_PORT}`);
   logSuccess(`WebSocket available at ws://${getLocalIp()}:${CONFIG.PORT}/simrig/${simrigId}`);
 
   process.on('SIGINT', () => {
