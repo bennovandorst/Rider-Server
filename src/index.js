@@ -32,6 +32,7 @@ rl.question('Which SimRig are we using? (1 or 2): ', async simrigId => {
   await messaging.connect(simrigId, [
     simRigConfig.cartelemetryQueue,
     simRigConfig.lapdataQueue,
+    simRigConfig.cardamageQueue,
   ]);
 
   messaging.consume(simrigId, simRigConfig.cartelemetryQueue, data => {
@@ -42,12 +43,20 @@ rl.question('Which SimRig are we using? (1 or 2): ', async simrigId => {
     websocket.broadcast(simrigId, { type: 'lapData', data });
   });
 
+  messaging.consume(simrigId, simRigConfig.cardamageQueue, data => {
+    websocket.broadcast(simrigId, { type: 'carDamage', data });
+    console.log(data)
+  })
+
   telemetry.on('carTelemetry', data => {
     messaging.publish(simrigId, simRigConfig.cartelemetryQueue, data);
   });
   telemetry.on('lapData', data => {
     messaging.publish(simrigId, simRigConfig.lapdataQueue, data);
   });
+  telemetry.on('carDamage', data => {
+    messaging.publish(simrigId, simRigConfig.cardamageQueue, data);
+  })
 
   telemetry.start();
 

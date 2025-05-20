@@ -6,10 +6,12 @@ export const CONFIG = {
     '1': {
       cartelemetryQueue: 'simrig1_cartelemetry',
       lapdataQueue: 'simrig1_lapdata',
+      cardamageQueue: 'simrig1_cardamage',
     },
     '2': {
       cartelemetryQueue: 'simrig2_cartelemetry',
       lapdataQueue: 'simrig2_lapdata',
+      cardamageQueue: 'simrig2_cardamage',
     }
   }
 };

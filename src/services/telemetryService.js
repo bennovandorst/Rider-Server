@@ -16,6 +16,10 @@ export class TelemetryService extends EventEmitter {
     this.client.on(PACKETS.lapData, packet => {
       this.emit('lapData', packet);
     });
+
+    this.client.on(PACKETS.carDamage, packet => {
+        this.emit('carDamage', packet);
+    });
   }
 
   start() {
