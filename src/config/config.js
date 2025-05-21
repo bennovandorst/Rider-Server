@@ -7,13 +7,13 @@ export const CONFIG = {
       cartelemetryQueue: 'simrig1_cartelemetry',
       lapdataQueue: 'simrig1_lapdata',
       cardamageQueue: 'simrig1_cardamage',
-      carsetupQueue: 'simrig1_carsetup',
+      carsetupsQueue: 'simrig1_carsetups',
     },
     '2': {
       cartelemetryQueue: 'simrig2_cartelemetry',
       lapdataQueue: 'simrig2_lapdata',
       cardamageQueue: 'simrig2_cardamage',
-      carsetupQueue: 'simrig2_carsetup',
+      carsetupsQueue: 'simrig2_carsetups',
     }
   }
 };

@@ -22,7 +22,7 @@ export class TelemetryService extends EventEmitter {
     });
 
     this.client.on(PACKETS.carSetups, packet => {
-        this.emit('carSetup', packet);
+        this.emit('carSetups', packet);
     });
   }
 
