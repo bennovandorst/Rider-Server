@@ -20,8 +20,12 @@ rl.question('Which SimRig are we using? (1 or 2): ', async simrigId => {
     process.exit(1);
   }
 
-  logSuccess(`SimRig ${simrigId} selected`);
-  launchRider();
+  if (process.env.DEV_MODE === 'true') {
+    logSuccess(`SimRig ${simrigId} selected (DEV MODE - skipping Rider launch)`);
+  } else {
+    logSuccess(`SimRig ${simrigId} selected. Launching Rider...`);
+    launchRider();
+  }
 
   const telemetry = new TelemetryService();
   const messaging = new MessagingService(CONFIG.RABBIT_URL);

@@ -5,6 +5,7 @@ import figlet from 'figlet';
 import { logInfo, logSuccess, logError } from './src/utils/logger.js';
 
 const execAsync = promisify(exec);
+const isDev = process.env.DEV_MODE === 'true';
 
 function figletAsync(text) {
   return new Promise((resolve, reject) => {
@@ -37,14 +38,19 @@ async function waitForDockerAndStart() {
       console.log(stdout.trim());
 
       logInfo("Starting WebSocket Server...");
-      
+
+      if (isDev) {
+        logInfo("Dev mode enabled. Skipping Rider launch in index.js");
+      }
+
       const devProcess = spawn("node", ["src/index.js"], {
         cwd: process.cwd(),
         stdio: "inherit",
         shell: true,
         env: {
           ...process.env,
-          FORCE_COLOR: "true"
+          FORCE_COLOR: "true",
+          DEV_MODE: isDev ? "true" : "false"
         }
       });
 
