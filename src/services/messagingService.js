@@ -59,7 +59,7 @@ export class MessagingService {
 
           resolve();
         } catch (err) {
-          logError(`Connection error for SimRig ${simRigId}: ${err.message}`);
+          logError(`Connection error for SimRig ${simRigId}: ${err.message}, RabbitMQ might still be starting up if you've just launched.`);
           setTimeout(connectAndSetup, 5000);
         }
       };
