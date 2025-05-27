@@ -9,20 +9,8 @@ export class TelemetryService extends EventEmitter {
     super();
     this.client = new F1TelemetryClient({ port: CONFIG.UDP_PORT, bigintEnabled: false });
 
-    this.client.on(PACKETS.carTelemetry, packet => {
-      this.emit('carTelemetry', packet);
-    });
-
-    this.client.on(PACKETS.lapData, packet => {
-      this.emit('lapData', packet);
-    });
-
-    this.client.on(PACKETS.carDamage, packet => {
-        this.emit('carDamage', packet);
-    });
-
-    this.client.on(PACKETS.carSetups, packet => {
-        this.emit('carSetups', packet);
+    Object.values(PACKETS).forEach(packetType => {
+      this.client.on(packetType, packet => this.emit(packetType, packet));
     });
   }
 
