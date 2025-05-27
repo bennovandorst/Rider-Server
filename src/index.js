@@ -6,6 +6,9 @@ import { getLocalIp } from './utils/ip.js';
 import { launchRider } from './utils/rider.js';
 import { logError, logInfo, logSuccess } from './utils/logger.js';
 import readline from 'readline';
+import { constants } from '@racehub-io/f1-telemetry-client';
+
+const { PACKETS } = constants;
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -33,45 +36,30 @@ rl.question('Which SimRig are we using? (1 or 2): ', async simrigId => {
 
   websocket.start(CONFIG.PORT);
 
-  await messaging.connect(simrigId, [
-    simRigConfig.cartelemetryQueue,
-    simRigConfig.lapdataQueue,
-    simRigConfig.cardamageQueue,
-    simRigConfig.carsetupsQueue,
-  ]);
+  const packetQueuePairs = Object.entries(PACKETS)
+      .map(([packetKey, packetType]) => {
+        const queueKey = packetKey.replace(/([A-Z])/g, l => l.toLowerCase());
+        const configQueue =
+            simRigConfig[`${queueKey}Queue`] ||
+            simRigConfig[`${packetKey.charAt(0).toLowerCase()}${packetKey.slice(1)}Queue`];
+        return configQueue ? { packetType, packetKey, configQueue } : null;
+      })
+      .filter(Boolean);
 
-  messaging.consume(simrigId, simRigConfig.cartelemetryQueue, data => {
-    websocket.broadcast(simrigId, { type: 'carTelemetry', data });
-  });
+  await messaging.connect(simrigId, packetQueuePairs.map(p => p.configQueue));
 
-  messaging.consume(simrigId, simRigConfig.lapdataQueue, data => {
-    websocket.broadcast(simrigId, { type: 'lapData', data });
-  });
+  for (const { packetType, packetKey, configQueue } of packetQueuePairs) {
+    messaging.consume(simrigId, configQueue, data => {
+      websocket.broadcast(simrigId, { type: packetKey, data });
+    });
 
-  messaging.consume(simrigId, simRigConfig.cardamageQueue, data => {
-    websocket.broadcast(simrigId, { type: 'carDamage', data });
-  })
-
-  messaging.consume(simrigId, simRigConfig.carsetupsQueue, data => {
-    websocket.broadcast(simrigId, { type: 'carSetups', data });
-  })
-
-  telemetry.on('carTelemetry', data => {
-    messaging.publish(simrigId, simRigConfig.cartelemetryQueue, data);
-  });
-  telemetry.on('lapData', data => {
-    messaging.publish(simrigId, simRigConfig.lapdataQueue, data);
-  });
-  telemetry.on('carDamage', data => {
-    messaging.publish(simrigId, simRigConfig.cardamageQueue, data);
-  })
-  telemetry.on('carSetups', data => {
-    messaging.publish(simrigId, simRigConfig.carsetupsQueue, data);
-  })
+    telemetry.on(packetKey, data => {
+      messaging.publish(simrigId, configQueue, data);
+    });
+  }
 
   telemetry.start();
 
-  //logInfo(`UDP listening on port ${CONFIG.UDP_PORT}`);
   logSuccess(`WebSocket available at ws://${getLocalIp()}:${CONFIG.PORT}/simrig/${simrigId}`);
 
   process.on('SIGINT', () => {
